@@ -436,9 +436,9 @@ class Messages {
     }
     /////END TAKEPICS MODE without session
     showEditGroup() {
-        ///every one use group B now
-
-        currentSession.group = "B";
+        
+        //we set group by odd or even id number 
+        //currentSession.group = "B";
         this.showSelectBlock()
     }
     /*

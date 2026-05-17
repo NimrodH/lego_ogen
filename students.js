@@ -267,10 +267,11 @@ class Session {
     }
 
     runPart() {
-        console.log("in runPart this.currAutoColor: " + this.currAutoColor);
+        console.log("this.connectedStage: " + this.connectedStage);
         let delButton = (near.children).filter(b => b.name == "delete")[0];
         delButton.isVisible = false;///if we allow to delete correct block we will get connectedStage++ twice
         let modelLabel = this.modelInConnectedStage[this.connectedStage];
+        console.log("modelLabel: " + modelLabel);
         currentModel = getModel(modelLabel);///connectedStage = 0
         currentWorld = this.worldByModel[modelLabel];
         setWorld(currentWorld);///TODO:in setWorld show only relevent models follwing session.worldByModel
