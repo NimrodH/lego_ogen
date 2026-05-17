@@ -335,7 +335,7 @@ class Messages {
         this.currentScreen = "editID";
         this.textField.text = "יש ללחוץ (להקליק) בתוך השדה השחור" + "\n" + "" + "\n" +
             "לאחר שנפתחה המקלדת, יש להזין את " + "\n" +
-            "המספר שקיבלת ממנהלת הניסוי " + "\n" + "" + "\n" +
+            "המספר שקיבלת ממנהל הניסוי " + "\n" + "" + "\n" +
             "לסיום לחצ/י המשך"
 
         this.nextButton.isEnabled = false;

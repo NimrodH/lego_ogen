@@ -12,7 +12,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Open index.html",
-            "file": "C:\\Users\\User\\OneDrive\\develope\\lego2023\\legoProgPub\\index.html"
+            "file": "C:\\Users\\User\\OneDrive\\develope\\lego_ogen2026\\program\\lego_ogen\\index.html"
         }
     ]
 }
