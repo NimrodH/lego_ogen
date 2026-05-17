@@ -141,7 +141,6 @@ class Session {
                 setVisibleModel(m3, false);
                 setVisibleModel(m4, false);
                 this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W2", "M4": "W2" };
-
                 break;
             case "C":///each model in one of 4 worlds
                 this.worldByModel = { "M1": "W1", "M2": "W2", "M3": "W3", "M4": "W4" };
