@@ -29,7 +29,6 @@ class Session {
     actionId = 0;/// running number for any action (click) the user done - to be used on the database table
     connectedStage = 0;///the order number of true conection action (no matter which model) in the session
     group;///each group handle differant no. of models when training
-    startAutoColor; ///we set it here in the constructor (even id number will start with auto)
     currAutoColor; ///init as startAutoColor but can be changed if deal done 
     //pairName;///will be in format (830_831) the first user ID _ and one number above it (that must be the other user in the pair)
     currentModelInArray = 0;///index in array of shown model
@@ -64,23 +63,18 @@ class Session {
         }
         this.userId = id;
         var number;
-        var pairStart;
-        var pairEnd;
+  
         if (!(isNaN(id))) {
             console.log('Input was not a number we will convert it');
             number = parseInt(id, 10);
         }
         
         let isODD = (number % 2 === 0);
-        ///the user with even id number will start with auto color
+        ///the user with even id number will get high Ogen
         if (isODD) {
-            pairEnd = (number + 1).toString();
-            pairStart = id;
-            this.startAutoColor = "Allowed to choose";
+            this.group = "ogenLow"
         } else {
-            pairStart = (number - 1).toString();
-            pairEnd = id;
-            this.startAutoColor = "Forced to manual";
+            this.group = "ogenHigh";
         }
         if((this.userId == "666") || (this.userId == "667")) {
             enforceTraining = false;
@@ -91,7 +85,6 @@ class Session {
         } else {
             this.currAutoColor = "NO";///in the other group we force to statrt with manual
         }
-        //this.pairName = pairStart + "_" + pairEnd;
         addEventListener("reportClick", this.handleReportClick.bind(this));
     }
 
@@ -140,10 +133,11 @@ class Session {
         }
 
         switch (this.group) {///TODO: build more then one model as defined for the group
-            case "A": ///all models in the same world
+            case "A": ///all models in the same world was A
                 this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W1", "M4": "W1" };
                 break;
-            case "B": ///two worlds
+            case "ogenLow":
+            case "ogenHigh": ///two worlds was B
                 setVisibleModel(m3, false);
                 setVisibleModel(m4, false);
                 this.worldByModel = { "M1": "W1", "M2": "W1", "M3": "W2", "M4": "W2" };

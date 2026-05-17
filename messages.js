@@ -135,9 +135,9 @@ class Messages {
 `
 
 
-        const initialText = "במסך זה יופיעו הנחיות" + "\n" + 
-            "מאחוריך מספר לבנים לבניית המודל" + "\n" + 
-            "[אחרי שראינו את האבנים יש להקליק על כפתור [המשך" + "\n" + 
+        const initialText = "במסך זה יופיעו הנחיות" + "\n" +
+            "מאחוריך מספר לבנים לבניית המודל" + "\n" +
+            "[אחרי שראינו את האבנים יש להקליק על כפתור [המשך" + "\n" +
             "הקלקה פרושה להצביע עם הקרן על הכפתור וללחוץ על ההדק";
 
         let text1 = this.textField;
@@ -556,53 +556,15 @@ class Messages {
         this.currentScreen = "trainingScreen";
         this.textField.text = "לפני הוספת אבן למודל יש לבחור בליטה במודל" + "\n" + " ובליטה בחלק המתחבר כך שיצבעו בצבע צהוב" + "\n" + " לאחר מכן יש ללחוץ על כפתור [>>]. לאחר " + "\n" + "לחיצה על כפתור זה, האבן תוצמד למודל" + "\n" + " והנקודות שנבחרו יתלכדו" + "\n" + "" + "\n" + "להסרת האבן האחרונה שנוספה למודל " + "\n" + "יש ללחוץ על כפתור [<<].כעת " + "\n" + "חבר/י מספר אבנים למודל על פי הנחיות המנחה"
     }
+    
     showConnect() {
         this.currentScreen = "connect";
-        let msgBuySell;
-        switch (currentSession.group) {
-            case "A":
-                this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים" + "\n" +
-                    "מאחורי אבני הבניין ישנם שני בסיסים נוספים" + "\n\n" +
-                    msgBuySell + "\n\n" +
-                    "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" +
-                    "להתחיל לבנות את המודלים בהתאם" + "\n" +
-                    "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
-                break;
-            case "B":
-                console.log("in showConnect B, part: " + currentSession.part);
-                if (currentSession.startAutoColor == "Allowed to choose") {
-                    this.showColorChooseButtons();
-                    this.textField.text = this.text_part1_autoColor;
-                } else {
-                    this.textField.text = this.text_part1_manualColor;
-                    this.hideNextButton();
-                }
-                /*
-                this.textField.text = "מימינך ומשמאלך בסיסים לשני מודלים" + "\n" +
-                    "שני מודלים נוספים יוצגו לפניך בהמשך" + "\n" +
-                    msgBuySell + "\n\n" +
-                    "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" +
-                    "להתחיל לבנות את המודלים בהתאם" + "\n" +
-                    "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
-                */
-                break;
-
-            case "C":
-                this.textField.text = "משמאלך שוב הבסיס למודל" + "\n" +
-                    "שלושה מודלים נוספים יוצגו לפניך בהמשך" + "\n\n" +
-                    msgBuySell + "\n\n" +
-                    "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" +
-                    "להתחיל לבנות את המודלים בהתאם" + "\n" +
-                    "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
-                break;
-            default:
-                break;
-        }
-        if (enforceTraining) {
-            this.nextButton.isEnabled = false;
-        }
-        currentSession.part = "training"
-    }
+        this.textField.text = "כעת תדרשו לבצע משימה ראשונה מתוך שתיים" + "\n" +
+            "מימינך ומשמאלך בסיסים לשני מודלים" + "\n" +
+            "שני מודלים נוספים יוצגו לפניך בהמשך" + "\n" +
+            "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" +
+            "להתחיל לבנות את המודלים בהתאם" + "\n" +
+            "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
 
     showPart2_1() {
         this.currentScreen = "part2_1";
