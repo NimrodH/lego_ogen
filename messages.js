@@ -35,9 +35,10 @@ class Messages {
         this.nextButton.height = "70px";
         this.advancedTexture.addControl(this.nextButton);
 
+        this.timeGrid = this.addColumnChoiceGrid(0);
+        this.timeGrid.isVisible = false;
 
-        this.addColorChooseButtons();
-
+        //this.addColorChooseButtons();
 
         this.text_part2_ogenHigh_1 = `
 
@@ -57,16 +58,17 @@ class Messages {
 
 
 
-אם תבחר/י לרכוש את היכולת שהמערכת תבצע עבורך 
-את בחירת הצבעים באופן אוטומטי,  תתווסף באופן אוטומטי
-.תוספת של 2 דקות לזמן הביצוע שלך כפי שיירשם במערכת
-,לדוגמא, אם תסיים את השלב הזה תוך 9 דקות 
-.הזמן שייחשב לציון הסופי יהיה 11 דקות
-אם תבחר לבצע את הבחירה בעצמך, ההמשך יתבצע כמו בתרגול
-.והזמן שיירשם יהיה זמן מדויק, ללא תוספת 
+אתם יכולים לנסות לסיים ת המשימה תוך 5 דקות או לבחור זמן אחר
+שבו לדעתכם תוכלו לסיים את המשימה
 
-:בחר את הדרך שבה ברצונך להמשיך
-`
+שימו לב
+
+תוכלו לבחור זמן ארוך יותר, אך כל דקה יותר מ 5 דקות 
+תקטין את הבונוס ב 4 ש"ח
+
+אם לא תסיימו בזמן שתבחרו - לא תקבלו בונוס כלל
+אם תסיימו בזמן שבחרתם או לפני, תקבלו בונוס לפי הזמן שבחרתם
+גם אם סיימתם מהר יותר`
 
         this.text_part2_ogenLow_1 = `
 
@@ -87,17 +89,17 @@ class Messages {
 
 
 
-אם תבחר/י להמשיך עם היכולת
-,תתווסף הפעם תוספת של 2 דקות לזמן הביצוע שלך
+אתם יכולים לנסות לסיים ת המשימה תוך 15 דקות או לבחור זמן אחר
+שבו לדעתכם תוכלו לסיים את המשימה
 
-,לדוגמא, אם תסיים את השלב הזה תוך 9 דקות
-.הזמן שייחשב לציון הסופי יהיה 11 דקות
+שימו לב
 
-אם תבחר לבצע את הבחירה בעצמך, שלב זה יתבצע כמו בתרגול
+תוכלו להגדיל את הבונוס שלכם אם תבחרו זמן קצר מ 15 דקות 
+כל דקה פחות מ 15 דקות תגדיל את הבונוס ב 4 ש"ח
 
-.והזמן שיירשם יהיה זמן מדויק, ללא תוספת
-
-:בחר את הדרך שבה ברצונך להמשיך
+אם לא תסיימו בזמן שתבחרו - לא תקבלו בונוס כלל
+אם תסיימו בזמן שבחרתם או לפני, תקבלו בונוס לפי הזמן שבחרתם
+גם אם סיימתם מהר יותר
 
 `
 
@@ -138,6 +140,182 @@ class Messages {
 
     showNextButton() {
         this.nextButton.isVisible = true;
+    }
+    addColumnChoiceGrid(initialGreenColumn = 0) {
+
+        const topLabels = ["50", "46", "42", "38", "34", "30", "26", "22", "18", "14", "10"];
+        const bottomLabels = ["5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"];
+
+        const columns = topLabels.length;
+        const rows = 3;
+
+        this.selectedColumn = initialGreenColumn;
+        this.clickedColumn = initialGreenColumn;
+
+        const grid = new BABYLON.GUI.Grid();
+
+        grid.width = "950px";
+        grid.height = "120px";
+        grid.top = "500px";
+
+        grid.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        grid.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+
+        // Left title column
+        grid.addColumnDefinition(1.8);
+
+        // Data columns
+        for (let c = 0; c < columns; c++) {
+            grid.addColumnDefinition(1);
+        }
+
+        for (let r = 0; r < rows; r++) {
+            grid.addRowDefinition(1 / rows);
+        }
+
+        this.columnChoiceCells = [];
+
+        // ------------------------------------------------
+        // Left labels
+        // ------------------------------------------------
+
+        const leftTop = new BABYLON.GUI.TextBlock();
+        leftTop.text = 'בונוס בש"ח';
+        leftTop.color = "black";
+        leftTop.fontSize = 22;
+        grid.addControl(leftTop, 0, 0);
+
+        const leftBottom = new BABYLON.GUI.TextBlock();
+        leftBottom.text = "זמן בדקות";
+        leftBottom.color = "black";
+        leftBottom.fontSize = 22;
+        grid.addControl(leftBottom, 2, 0);
+
+        // ------------------------------------------------
+        // Utility functions
+        // ------------------------------------------------
+
+        grid.getColumnData = (colNum) => {
+
+            if (colNum < 0 || colNum >= columns) {
+                return null;
+            }
+
+            return {
+                column: colNum,
+                bonus: Number(topLabels[colNum]),
+                time: Number(bottomLabels[colNum])
+            };
+        };
+
+        const setColumnColor = (columnIndex, color) => {
+
+            // only second line changes color
+            this.columnChoiceCells[1][columnIndex].background = color;
+        };
+
+        const resetColumnColors = () => {
+
+            for (let c = 0; c < columns; c++) {
+
+                let color = "white";
+
+                if (c === this.selectedColumn) {
+                    color = "red";
+                }
+                else if (c === initialGreenColumn) {
+                    color = "green";
+                }
+
+                setColumnColor(c, color);
+            }
+        };
+
+        // ------------------------------------------------
+        // Create cells
+        // ------------------------------------------------
+
+        for (let r = 0; r < rows; r++) {
+
+            this.columnChoiceCells[r] = [];
+
+            for (let c = 0; c < columns; c++) {
+
+                const rect = new BABYLON.GUI.Rectangle();
+
+                rect.thickness = 1;
+                rect.color = "black";
+                rect.background =
+                    (r === 1 && c === initialGreenColumn)
+                        ? "green"
+                        : "white";
+
+                rect.hoverCursor = "pointer";
+
+                const text = new BABYLON.GUI.TextBlock();
+
+                if (r === 0) {
+                    text.text = topLabels[c];
+                }
+                else if (r === 1) {
+                    text.text = "X";
+                }
+                else {
+                    text.text = bottomLabels[c];
+                }
+
+                text.color = "black";
+                text.fontSize = 24;
+
+                rect.addControl(text);
+
+                // -----------------------------------------
+                // Events
+                // -----------------------------------------
+
+                rect.onPointerEnterObservable.add(() => {
+
+                    if (this.selectedColumn !== c) {
+                        setColumnColor(c, "yellow");
+                    }
+                });
+
+                rect.onPointerOutObservable.add(() => {
+
+                    resetColumnColors();
+                });
+
+                rect.onPointerClickObservable.add(() => {
+
+                    this.selectedColumn = c;
+                    this.clickedColumn = c;
+
+                    resetColumnColors();
+
+                    console.log("Clicked column:", c);
+                });
+
+                this.columnChoiceCells[r][c] = rect;
+
+                // +1 בגלל עמודת הכותרת השמאלית
+                grid.addControl(rect, r, c + 1);
+            }
+        }
+
+        grid.setSelectedColumn = (colNum) => {
+
+            if (colNum < 0 || colNum >= columns) {
+                return;
+            }
+
+            this.selectedColumn = colNum;
+            this.clickedColumn = colNum;
+
+            resetColumnColors();
+        };
+        this.advancedTexture.addControl(grid);
+
+        return grid;
     }
 
     addColorChooseButtons() {
@@ -258,16 +436,32 @@ class Messages {
             case "part2_1":
                 this.showPart2_2()
                 break;
-            case "part2_2":
-                currentSession.initPart2();//////////////
-                ////////////////let buyTime = this.donePart2();///donePart2 will send user answer to database but 
+            case "part2_2": ///screen to select the time user thinks he can finish the task. after clicking next, we will send the answer to database and go to startPart2 to approve 
+                //currentSession.initPart2();//////////////
+                let buyTime = this.showSelectTime();///donePart2 will send user answer to database but 
                 ///we don't know yet the answer (session will triger it later) so we dont call any screen
                 ////was currentSession.initExamA();
                 //////////////////this.nextButton.isEnabled = true;///false;  true: we want to allow retry 
-                this.hideNextButton();
+                //this.hideNextButton();
                 break;
-            case "startPart2":
-                currentSession.initPart2();
+            case "part2_3": ///screen to select the time user thinks he can finish the task. after clicking next, we will send the answer to database and go to startPart2 to approve 
+
+                console.log("in startPart2. we need to approve, allow to go back or to start part 2");
+                console.log("selected column: " + this.selectedColumn);
+                console.log("bonus: " + this.timeGrid.getColumnData(this.selectedColumn).bonus);
+                let bonus = this.timeGrid.getColumnData(this.selectedColumn).bonus;
+                let time = this.timeGrid.getColumnData(this.selectedColumn).time;
+                this.showApprove(bonus, time);
+                //currentSession.initPart2();//////////////
+                ///donePart2 will send user answer to database but 
+                ///we don't know yet the answer (session will triger it later) so we dont call any screen
+                ////was currentSession.initExamA();
+                //////////////////this.nextButton.isEnabled = true;///false;  true: we want to allow retry 
+                //this.hideNextButton();
+                break;
+            case "startPart2":///ask to approve. allow to go back or to start part 2
+                //currentSession.initPart2();
+
                 this.nextButton.isEnabled = false;
                 break;
             case "examA":
@@ -430,7 +624,7 @@ class Messages {
     }
     /////END TAKEPICS MODE without session
     showEditGroup() {
-        
+
         //we set group by odd or even id number 
         //currentSession.group = "B";
         this.showSelectBlock()
@@ -538,15 +732,13 @@ class Messages {
     showPart2_1() {
         this.currentScreen = "part2_1";
         //let timeToShow = Math.floor((currentSession.timer.currTime - currentSession.timer.firstTime) / 1000);
-        //console.log("currentSession.timer.firstTime: " + currentSession.timer.firstTime);
-        //console.log("showPart2_1 currentSession.currAutoColor: " + currentSession.currAutoColor);
         //let timeOfpart1 = currentSession.timer.secToTimeString(timeToShow);///was wrong: currTime
         if (currentSession.currSession == "ogenHigh") { ///קונה
             //const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
             //const initialText = firstLine + this.text_part2_ogenHigh_1
             this.textField.text = this.text_part2_ogenHigh_1///to take it out we need declare initialText before as variable
         } else {/// מוכר
-           // const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
+            // const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
             //const initialText = "\n" + firstLine + this.text_part2_ogenLow_1
             this.textField.text = this.text_part2_ogenLow_1
         }
@@ -554,32 +746,13 @@ class Messages {
         this.showNextButton();
 
         this.nextButton.isEnabled = true;
-        /*
-                let inputTextArea = new BABYLON.GUI.InputText('time4Buy', "");
-                inputTextArea.height = "40px";
-                inputTextArea.color = "white";
-                inputTextArea.fontSize = 48;
-                inputTextArea.top = "-120px";
-                inputTextArea.height = "70px";
-                inputTextArea.width = "200px";
-                inputTextArea.onTextChangedObservable.add(() => this.nextButton.isEnabled = true);
-                this.advancedTexture.addControl(inputTextArea);
-        
-                const keyboard = new BABYLON.GUI.VirtualKeyboard("vkb");
-                keyboard.addKeysRow(["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\u2190"]);
-                keyboard.connect(inputTextArea);
-                keyboard.top = "-10px";
-                keyboard.scaleY = 2;
-                keyboard.scaleX = 2;
-                //keyboard.left = "10px";
-                this.advancedTexture.addControl(keyboard);
-        */
+
     }
 
     showPart2_2() {
         this.currentScreen = "part2_2";
-        console.log("showPart2_2 currentSession.currAutoColor: " + currentSession.currAutoColor);
-        if (currentSession.currAutoColor == "NO") {///קונה
+        //console.log("showPart2_2 currentSession.currAutoColor: " + currentSession.currAutoColor);
+        if (currentSession.currSession == "ogenHigh") {///קונה
             const initialText = this.text_part2_ogenHigh_2
             this.textField.text = initialText;///to take it out we need declare initialText before as variable
         } else {///מוכר
@@ -589,7 +762,7 @@ class Messages {
 
 
         this.showNextButton();///to init part 2
-        this.showColorChooseButtons();
+        //this.showColorChooseButtons();
 
         this.nextButton.isEnabled = true;
         /*
@@ -613,11 +786,31 @@ class Messages {
                 this.advancedTexture.addControl(keyboard);
         */
     }
-    donePart2() {
-        this.textField.text = "יש להמתין לתשובת בן הזוג"; ///will be ovrighten by server if needed
-        let buyInputfield = this.advancedTexture.getControlByName("time4Buy");
-        let buyTime = buyInputfield.text;
-        console.log("part2 buyTime: " + buyTime);
+
+    ///We will show the select panel and after clicking next, we will send the answer to database and go to start part 2 to approve.
+    showSelectTime() {
+        console.log("in showSelectTime ");
+        this.timeGrid.isVisible = true;
+        this.nextButton.isEnabled = true;
+        this.showNextButton();
+        //this.nextButton.top = "655px";
+        this.currentScreen = "part2_3";
+        this.textField.text = `
+
+
+
+
+בחרו את הזמן שבו לדעתכם תוכלו לסיים את המשימה
+
+גובה הבונוס עבור כל זמן מופיע מעל הסקאלה
+
+יש להצביע עם הקרן על האיקס עם הזמן והבונוס הנבחרים
+
+הקלק כדי לבחור אותם ואז הקלק המשך
+`
+        //let buyInputfield = this.advancedTexture.getControlByName("time4Buy");
+        // let buyTime = buyInputfield.text;
+
         ////was curentSession = new ASession(id)...
         ///TODO: call curentSession to add answer (buyTime) to database 
         ///      curentSession will call the next stage when it will get trigger from database
@@ -629,10 +822,19 @@ class Messages {
         this.advancedTexture.removeControl(buyKeyboard);
         buyKeyboard.dispose();
         */
-        return buyTime;
+        return "buyTime";
     }
 
-
+    showApprove(bonus, time) {
+        this.timeGrid.isVisible = false;
+        this.hideNextButton();
+        this.currentScreen = "approve";
+        this.textField.text = `
+            בחרתם זמן של ${time} דקות אם תסיימו בזמן תקבלו בונוס של ${bonus} ש"ח
+            אם לא תעמדו בזמן - לא תקבלו בונוס
+            לאשור לחצו המשך 
+`
+    }
 
     showStartPart2(isDealdone, mySecondsOffered, pairSecondsOffered) { ///called when server  send "continue"
         let buyInputfield = this.advancedTexture.getControlByName("time4Buy");
