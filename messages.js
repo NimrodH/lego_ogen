@@ -38,7 +38,7 @@ class Messages {
         this.timeGrid = this.addColumnChoiceGrid(0);
         this.timeGrid.isVisible = false;
 
-        //this.addColorChooseButtons();
+        this.addApproveButtons();
 
         this.text_part2_ogenHigh_1 = `
 
@@ -123,14 +123,14 @@ class Messages {
         //plane.dispose();
     }
 
-    showColorChooseButtons() {
+    showApproveButtons() {
         this.hideNextButton();
-        this.autoColorButton.isVisible = true;
+        this.approveOKButton.isVisible = true;
         this.manualColorButton.isVisible = true;
     }
 
-    hideColorChooseButtons() {
-        this.autoColorButton.isVisible = false;
+    hideApproveButtons() {
+        this.approveOKButton.isVisible = false;
         this.manualColorButton.isVisible = false;
     }
 
@@ -318,26 +318,26 @@ class Messages {
         return grid;
     }
 
-    addColorChooseButtons() {
+    addApproveButtons() {
         // Create and hide color choice buttons
 
-        this.autoColorButton = BABYLON.GUI.Button.CreateSimpleButton(
+        this.approveOKButton = BABYLON.GUI.Button.CreateSimpleButton(
             "autoColorBtn",
-            "שהמערכת תבחר את הצבעים עבורי "
+            "כן, המשך"
         );
-        this.autoColorButton.width = 0.8;
-        this.autoColorButton.height = "70px";
-        this.autoColorButton.color = "white";
-        this.autoColorButton.fontSize = 44;
-        this.autoColorButton.background = "green";
-        this.autoColorButton.top = "120px";
-        this.autoColorButton.left = "10px";
-        this.autoColorButton.onPointerUpObservable.add(this.handleAutoColorClick.bind(this));
-        this.advancedTexture.addControl(this.autoColorButton);
+        this.approveOKButton.width = 0.8;
+        this.approveOKButton.height = "70px";
+        this.approveOKButton.color = "white";
+        this.approveOKButton.fontSize = 44;
+        this.approveOKButton.background = "green";
+        this.approveOKButton.top = "120px";
+        this.approveOKButton.left = "10px";
+        this.approveOKButton.onPointerUpObservable.add(this.handleApproveOK.bind(this));
+        this.advancedTexture.addControl(this.approveOKButton);
 
         this.manualColorButton = BABYLON.GUI.Button.CreateSimpleButton(
             "manualColorBtn",
-            "מעדיף/ה לבחור את הצבעים בעצמי"
+            "לחזור לשינוי"
         );
         this.manualColorButton.width = 0.8;
         this.manualColorButton.height = "70px";
@@ -346,10 +346,10 @@ class Messages {
         this.manualColorButton.background = "green";
         this.manualColorButton.top = "210px";
         this.manualColorButton.left = "10px";
-        this.manualColorButton.onPointerUpObservable.add(this.handleManualColorClick.bind(this));
+        this.manualColorButton.onPointerUpObservable.add(this.handleApproveChange.bind(this));
         this.advancedTexture.addControl(this.manualColorButton);
 
-        this.autoColorButton.isVisible = false;
+        this.approveOKButton.isVisible = false;
         this.manualColorButton.isVisible = false;
     }
 
@@ -438,6 +438,11 @@ class Messages {
                 break;
             case "part2_2": ///screen to select the time user thinks he can finish the task. after clicking next, we will send the answer to database and go to startPart2 to approve 
                 //currentSession.initPart2();//////////////
+                if (currentSession.currSession == "ogenHigh") {///קונה
+                    this.timeGrid.setSelectedColumn(0);
+                } else {///מוכר
+                    this.timeGrid.setSelectedColumn(10);
+                }
                 let buyTime = this.showSelectTime();///donePart2 will send user answer to database but 
                 ///we don't know yet the answer (session will triger it later) so we dont call any screen
                 ////was currentSession.initExamA();
@@ -762,7 +767,7 @@ class Messages {
 
 
         this.showNextButton();///to init part 2
-        //this.showColorChooseButtons();
+        //this.showApproveButtons();
 
         this.nextButton.isEnabled = true;
         /*
@@ -829,6 +834,7 @@ class Messages {
         this.timeGrid.isVisible = false;
         this.hideNextButton();
         this.currentScreen = "approve";
+        this.showApproveButtons();
         this.textField.text = `
             בחרתם זמן של ${time} דקות אם תסיימו בזמן תקבלו בונוס של ${bonus} ש"ח
             אם לא תעמדו בזמן - לא תקבלו בונוס
@@ -902,84 +908,34 @@ class Messages {
         this.plane.isVisible = false;
     }
 
-    handleAutoColorClick() {
-        currentSession.currAutoColor = "YES";
-        colorButtonsIsVisible(false);
+    handleApproveOK() {
+        this.hideApproveButtons();
+        /// get current model name and step
+        //let mName = currentModel.metadata.modelName;
+        //let nextStep = currentModel.metadata.numOfBlocks + 1;
 
-        // get current model name and step
-        let mName = currentModel.metadata.modelName;
-        let nextStep = currentModel.metadata.numOfBlocks + 1;
-
-        const nexstDataLine = currentSession.trainingModelData
-            .filter(el => (el.step == nextStep) && (el.modelName == mName))[0];
-
-        if (nexstDataLine) {
-            let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
-            let newColor = colorName2Vector(nexstDataLine.color);
-            menuBlock.material.diffuseColor = newColor;
-        }
-
-        this.hideColorChooseButtons();
-        console.log("in handleAutoColorClick part: " + currentSession.part);
+        console.log("getColumnData: " + this.timeGrid.getColumnData(this.selectedColumn).time);
         console.log("cuurentScreen: " + this.currentScreen);
-        if (this.currentScreen == "part2_2") {
-            console.log("in handleAutoColorClick part: " + currentSession.part);
-            console.log("cuurentScreen: " + this.currentScreen);
-            this.textField.text = "לחץ המשך והתחל בבנייה"
-            this.showNextButton();
-            const initialData = {
-                action: 'autoColorClick',
-                userId: currentSession.userId,
-                startAutoColor: currentSession.startAutoColor,
-                secondColorState: "auto"
-            };
-            postDataFuncURL(coupleURL, initialData);
-        } else {
-            const initialData = {
-                action: 'autoColorClick',
-                userId: currentSession.userId,
-                startAutoColor: currentSession.startAutoColor,
-                firstColorState: "auto"
-            };
-            console.log(" initialData: " + initialData);
-            console.log(" coupleURL: " + coupleURL);
-            postDataFuncURL(coupleURL, initialData);
-            this.textField.text = "ניתן להתחיל בבנייה"
-        }
+        let theTime = this.timeGrid.getColumnData(this.selectedColumn).time;
+        let theBonus = this.timeGrid.getColumnData(this.selectedColumn).bonus;
+        this.textField.text = "התחל בבנייה"
+
+        const initialData = {
+            action: 'autoColorClick',
+            userId: currentSession.userId,
+            startAutoColor: "NO",
+            selectedTime: theTime,
+            selectedBonus: theBonus
+        };
+        postDataFuncURL(coupleURL, initialData);
+        //this.showNextButton();
+        currentSession.initPart2();
     }
 
-    handleManualColorClick() {
-        //console.log("in handleManualColorClick part: " + currentSession.part);
-        currentSession.currAutoColor = "NO";
-        colorButtonsIsVisible(true)
-        this.hideColorChooseButtons();
-
-        if (this.currentScreen == "part2_2") {
-            console.log("in handleAutoColorClick part: " + currentSession.part);
-            console.log("cuurentScreen: " + this.currentScreen);
-            const initialData = {
-                action: 'autoColorClick',
-                userId: currentSession.userId,
-                startAutoColor: currentSession.startAutoColor,
-                secondColorState: "manual"
-            };
-            /// replaced WebSocket send with REST call
-            postDataFuncURL(coupleURL, initialData);
-
-            this.textField.text = "לחץ המשך והתחל בבנייה"
-            this.showNextButton();
-        } else {
-            const initialData = {
-                action: 'autoColorClick',
-                userId: currentSession.userId,
-                startAutoColor: currentSession.startAutoColor,
-                firstColorState: "manual"
-            };
-            /// replaced WebSocket send with REST call
-            postDataFuncURL(coupleURL, initialData);
-
-            this.textField.text = "ניתן להתחיל בבנייה"
-        }
+    handleApproveChange() {
+        this.currentScreen = "part2_2"
+        this.screenDone()
+        this.hideApproveButtons();
     }
 
 
