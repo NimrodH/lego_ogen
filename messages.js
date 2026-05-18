@@ -149,6 +149,7 @@ class Messages {
         const columns = topLabels.length;
         const rows = 3;
 
+        this.initialGreenColumn = initialGreenColumn;
         this.selectedColumn = initialGreenColumn;
         this.clickedColumn = initialGreenColumn;
 
@@ -223,7 +224,7 @@ class Messages {
                 if (c === this.selectedColumn) {
                     color = "red";
                 }
-                else if (c === initialGreenColumn) {
+                else if (c === this.initialGreenColumn) {
                     color = "green";
                 }
 
@@ -246,7 +247,7 @@ class Messages {
                 rect.thickness = 1;
                 rect.color = "black";
                 rect.background =
-                    (r === 1 && c === initialGreenColumn)
+                    (r === 1 && c === this.initialGreenColumn)
                         ? "green"
                         : "white";
 
@@ -310,6 +311,7 @@ class Messages {
 
             this.selectedColumn = colNum;
             this.clickedColumn = colNum;
+            this.initialGreenColumn = colNum;
 
             resetColumnColors();
         };
@@ -732,6 +734,7 @@ class Messages {
             "להתחיל לבנות את המודלים בהתאם" + "\n" +
             "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
         currentSession.part = "training"
+        this.nextButton.isEnabled = false;
     }
 
     showPart2_1() {
