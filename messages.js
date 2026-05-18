@@ -39,20 +39,20 @@ class Messages {
         this.addColorChooseButtons();
 
 
-        this.text_part2_manualColor_1 = `
+        this.text_part2_ogenHigh_1 = `
 
 
 
 
-ביצעת את המשימה ללא היכולת שהמערכת תבחר עבורך את הצבע
+סיימתם את המשימה הראשונה. כעת תדרשו לבצע משימה שנייה ואחרונה
 
-באפשרותך להמשיך כפי שפעלת עד כה ולבצע את בחירת הצבעים בעצמך
+אשר תהייה באותה רמת קושי כמו המשימה הראשונה
 
-או לשנות את ההחלטה ולקבל את היכולת שהמערכת תבצע עבורך 
+עליכם לסיים את המשימה בתוך 5 דקות
 
-את בחירת הצבעים באופן אוטומטי
+אם תסיימו את המשימה בתוך 5 דקות תקבלו בונוס של 50 ש"ח
 `
-        this.text_part2_manualColor_2 = `
+        this.text_part2_ogenHigh_2 = `
         
 
 
@@ -68,27 +68,21 @@ class Messages {
 :בחר את הדרך שבה ברצונך להמשיך
 `
 
-        this.text_part2_autoColor_1 = `
+        this.text_part2_ogenLow_1 = `
 
 
 
 
-השתמשת ביכולת שהמערכת בחרה עבורך את הצבעים באופן אוטומטי 
+סיימתם את המשימה הראשונה. כעת תדרשו לבצע משימה שנייה ואחרונה
 
- ובשל כך נוספו לזמן שלך 3 דקות. כעת, תוכל לבחור 
+אשר תהייה באותה רמת קושי כמו המשימה הראשונה
 
- אם להמשיך להשתמש ביכולת האוטומטית לבחירת הצבע
+עליכם לסיים את המשימה בתוך 15 דקות
 
-.או לבצע את השלב הזה ללא תמיכה אוטומטית 
-
-ולבחור את הצבעים בעצמך
-
-
-(לחץ המשך)
-
+אם תסיימו את המשימה בתוך 15 דקות תקבלו בונוס של 10 ש"ח
 `
 
-        this.text_part2_autoColor_2 = `
+        this.text_part2_ogenLow_2 = `
 
 
 
@@ -532,27 +526,29 @@ class Messages {
 
     showConnect() {
         this.currentScreen = "connect";
-        this.textField.text = "כעת תדרשו לבצע משימה ראשונה מתוך שתיים" + "\n" +
+        this.textField.text = "כעת תדרשו לבצע משימה ראשונה מתוך שתיים" + "\n" + "\n" +
             "מימינך ומשמאלך בסיסים לשני מודלים" + "\n" +
             "שני מודלים נוספים יוצגו לפניך בהמשך" + "\n" +
             "רק לאחר קבלת הוראה מהמנחה ניתן " + "\n" +
             "להתחיל לבנות את המודלים בהתאם" + "\n" +
             "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
+        currentSession.part = "training"
     }
+
     showPart2_1() {
         this.currentScreen = "part2_1";
-        let timeToShow = Math.floor((currentSession.timer.currTime - currentSession.timer.firstTime) / 1000);
+        //let timeToShow = Math.floor((currentSession.timer.currTime - currentSession.timer.firstTime) / 1000);
         //console.log("currentSession.timer.firstTime: " + currentSession.timer.firstTime);
-        console.log("showPart2_1 currentSession.currAutoColor: " + currentSession.currAutoColor);
-        let timeOfpart1 = currentSession.timer.secToTimeString(timeToShow);///was wrong: currTime
-        if (currentSession.currAutoColor == "NO") { ///קונה
-            const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
-            const initialText = firstLine + this.text_part2_manualColor_1
-            this.textField.text = initialText///to take it out we need declare initialText before as variable
+        //console.log("showPart2_1 currentSession.currAutoColor: " + currentSession.currAutoColor);
+        //let timeOfpart1 = currentSession.timer.secToTimeString(timeToShow);///was wrong: currTime
+        if (currentSession.currSession == "ogenHigh") { ///קונה
+            //const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
+            //const initialText = firstLine + this.text_part2_ogenHigh_1
+            this.textField.text = this.text_part2_ogenHigh_1///to take it out we need declare initialText before as variable
         } else {/// מוכר
-            const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
-            const initialText = "\n" + firstLine + this.text_part2_autoColor_1
-            this.textField.text = initialText
+           // const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
+            //const initialText = "\n" + firstLine + this.text_part2_ogenLow_1
+            this.textField.text = this.text_part2_ogenLow_1
         }
 
         this.showNextButton();
@@ -584,10 +580,10 @@ class Messages {
         this.currentScreen = "part2_2";
         console.log("showPart2_2 currentSession.currAutoColor: " + currentSession.currAutoColor);
         if (currentSession.currAutoColor == "NO") {///קונה
-            const initialText = this.text_part2_manualColor_2
+            const initialText = this.text_part2_ogenHigh_2
             this.textField.text = initialText;///to take it out we need declare initialText before as variable
         } else {///מוכר
-            const initialText = this.text_part2_autoColor_2
+            const initialText = this.text_part2_ogenLow_2
             this.textField.text = initialText;
         }
 

@@ -160,6 +160,10 @@ function getTop(model) {
 }
 ///TODO: I remember there is built-in property\function that hide mesh including its childs? instead of the following?
 function setVisibleModel(theMesh, setItVisible) {
+    if (!theMesh) {
+        console.warn("setVisibleModel called with empty mesh");
+        return;
+    }
     theMesh.isVisible = setItVisible;
     let childs = theMesh.getChildMeshes(false);
     for (let index = 0; index < childs.length; index++) {

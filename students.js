@@ -123,7 +123,7 @@ class Session {
         let m2;
         let m3;
         let m4;
-        if (this.group == "A" || this.group == "B" || this.group == "C") {
+        if (this.group == "A" || this.group == "B" || this.group == "C" || this.group == "ogenLow" || this.group == "ogenHigh") {
             ///the normal groups. (differ than rebuild (D) or takepics)
             /// we may need to set it in the "switch" if we want differant positions in each group
             m1 = createModel("car", "M1", 5, 0, -5);
@@ -193,7 +193,7 @@ class Session {
             default:
                 break;
         }
-        if (this.group == "A" || this.group == "B" || this.group == "C") {
+        if (this.group == "A" || this.group == "B" || this.group == "C" || this.group == "ogenLow" || this.group == "ogenHigh") {
             ///the normal groups. (differ than rebuild (D) or takepics)
             /*
             let modelLabel = this.modelInConnectedStage[this.connectedStage];
@@ -208,7 +208,6 @@ class Session {
             */
             this.runPart();
             this.initUser();
-            colorButtonsIsVisible((this.currAutoColor == "NO"))///if it is "YES we get false = hide
         }
         
     }
@@ -219,7 +218,6 @@ class Session {
             action: 'initUser',
             userId: this.userId,
             group: this.group,
-            startAutoColor: this.startAutoColor
         };
         /// replaced WebSocket send with REST call
         await postDataFuncURL(coupleURL, initialData);
@@ -281,17 +279,6 @@ class Session {
         //console.log("pic: " + pic);
         this.doFbMessage(msg, pic);
 
-        ///autocolor
-        if (this.currAutoColor == "YES") {
-            ///TODO: we need to get the block type and color of the next model & step
-            ///         we have step+1, mName, it as "destModel.metadata.modelName"???                    
-            const nexstDataLine = this.trainingModelData.filter(el => (el.step == 1) && (el.modelName == mName))[0];
-            ///TODO: then to set the rlevant block in the menu to this color
-            ///          we have nestDataLine.type, nestDataLine.color
-            let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
-            let newColor = colorName2Vector(nexstDataLine.color);
-            menuBlock.material.diffuseColor = newColor;
-        }
     }
 
     nextStage() {
@@ -300,6 +287,7 @@ class Session {
         //disposeModels();
         ///TODO: must add "this.part" to the users records on the data base
         let timeToShow;
+        console.log("this.part: " + this.part);
         switch (this.part) {
             case "training":
                 this.timer.stopTimer();
@@ -505,7 +493,7 @@ class Session {
                 } 
             }
 
-            if (this.group == "A" || this.group == "B" || this.group == "C") {
+            if (this.group == "A" || this.group == "B" || this.group == "C" || this.group == "ogenLow" || this.group == "ogenHigh") {
                 //let mName;
                 let modelMx = currentModel.metadata.modelTitle;
                 saveUserAction("connect", "CORRECT", this.actionId++, typeName, modelMx, step, Date.now(), this.userId, this.group, this.part);
@@ -558,19 +546,7 @@ class Session {
             mName = currentModel.metadata.modelName;
             this.doFbMessage(msg, "textures/" + mName + (step + 1) + ".JPG");
         }
-        ///TODO: if we in autoColor
-        if (this.currAutoColor == "YES") {
-            console.log("step: " +step + " mName: " + mName)
-            ///TODO: we need to get the block type and color of the next model & step
-            ///         we have step+1, mName, it as "destModel.metadata.modelName"???                    
-            const nexstDataLine = this.trainingModelData.filter(el => (el.step == step +1) && (el.modelName == mName))[0];
-            ///TODO: then to set the rlevant block in the menu to this color
-            ///          we have nestDataLine.type, nestDataLine.color
-            console.log("step: " + step + "mName: " + mName)
-            let menuBlock = elementsMenu.getChildMeshes(false, node => node.name == nexstDataLine.type)[0];
-            let newColor = colorName2Vector(nexstDataLine.color);
-            menuBlock.material.diffuseColor = newColor;
-        }
+
     }
 
     reportDelete() {
