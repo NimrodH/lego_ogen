@@ -89,7 +89,7 @@ class Messages {
 
 
 
-אתם יכולים לנסות לסיים ת המשימה תוך 15 דקות או לבחור זמן אחר
+אתם יכולים לנסות לסיים את המשימה תוך 15 דקות או לבחור זמן אחר
 שבו לדעתכם תוכלו לסיים את המשימה
 
 שימו לב
@@ -304,7 +304,7 @@ class Messages {
         }
 
         grid.setSelectedColumn = (colNum) => {
-
+            console.log("setSelectedColumn: " + colNum + ", columns: " + columns);
             if (colNum < 0 || colNum >= columns) {
                 return;
             }
@@ -440,7 +440,7 @@ class Messages {
                 break;
             case "part2_2": ///screen to select the time user thinks he can finish the task. after clicking next, we will send the answer to database and go to startPart2 to approve 
                 //currentSession.initPart2();//////////////
-                if (currentSession.currSession == "ogenHigh") {///קונה
+                if (currentSession.group == "ogenHigh") {///קונה
                     this.timeGrid.setSelectedColumn(0);
                 } else {///מוכר
                     this.timeGrid.setSelectedColumn(10);
@@ -741,7 +741,7 @@ class Messages {
         this.currentScreen = "part2_1";
         //let timeToShow = Math.floor((currentSession.timer.currTime - currentSession.timer.firstTime) / 1000);
         //let timeOfpart1 = currentSession.timer.secToTimeString(timeToShow);///was wrong: currTime
-        if (currentSession.currSession == "ogenHigh") { ///קונה
+        if (currentSession.group == "ogenHigh") { ///קונה
             //const firstLine = " עד כה השקעת " + timeOfpart1 + " דקות בבנית 22 צעדים "
             //const initialText = firstLine + this.text_part2_ogenHigh_1
             this.textField.text = this.text_part2_ogenHigh_1///to take it out we need declare initialText before as variable
@@ -760,7 +760,7 @@ class Messages {
     showPart2_2() {
         this.currentScreen = "part2_2";
         //console.log("showPart2_2 currentSession.currAutoColor: " + currentSession.currAutoColor);
-        if (currentSession.currSession == "ogenHigh") {///קונה
+        if (currentSession.group == "ogenHigh") {///קונה
             const initialText = this.text_part2_ogenHigh_2
             this.textField.text = initialText;///to take it out we need declare initialText before as variable
         } else {///מוכר
