@@ -734,6 +734,12 @@ class Messages {
             "להתחיל לבנות את המודלים בהתאם" + "\n" +
             "להסברים שיופיעו מעל אבני הבניין. בהצלחה";
         currentSession.part = "training"
+        if (!currentSession.timer) {
+            currentSession.timer = new Timer();
+        }
+
+        currentSession.timer.startTimer();
+
         this.nextButton.isEnabled = false;
     }
 
@@ -900,9 +906,14 @@ class Messages {
     }
 
     showLastScreen() {
-        //this.currentScreen.
         this.currentScreen = "lastScreen";
-        this.textField.text = "תודה רבה. הורד את המשקפיים והחזר אותם לנסיין"
+        console.log("currentSession.timeOfPart2 : " + currentSession.timeOfPart2);
+        console.log("selectedTime: " + this.selectedTime);
+
+        this.textField.text =
+            "הזמן אותו בחרת: " + this.selectedTime + " דקות" + "\n" +
+            "הזמן בו ביצעת את השלב: " + currentSession.timeOfPart2 + "\n\n" +
+            "תודה רבה. הורד את המשקפיים והחזר אותן לנסיין";
         this.nextButton.isEnabled = false;
         currentSession.endSession();
     }
@@ -921,6 +932,7 @@ class Messages {
         console.log("cuurentScreen: " + this.currentScreen);
         let theTime = this.timeGrid.getColumnData(this.selectedColumn).time;
         let theBonus = this.timeGrid.getColumnData(this.selectedColumn).bonus;
+        this.selectedTime = theTime;
         this.textField.text = "התחל בבנייה"
 
         const initialData = {
@@ -1080,16 +1092,39 @@ class Timer {
     }
 
     startTimer() {
+        // prevent more than one running interval
+        this.stopTimer();
+
         this.firstTime = new Date();
         this.lastTime = this.firstTime;
+        this.currTime = this.firstTime;
+
         this.timerInterval = setInterval(this.updateTimeGap.bind(this), 1000);
         this.show();
     }
 
     stopTimer() {
-        clearInterval(this.timerInterval);
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+
+        // optional: freeze the timer exactly at stop time
+        this.currTime = new Date();
     }
 
+    /*
+        startTimer() {
+            this.firstTime = new Date();
+            this.lastTime = this.firstTime;
+            this.timerInterval = setInterval(this.updateTimeGap.bind(this), 1000);
+            this.show();
+        }
+    
+        stopTimer() {
+            clearInterval(this.timerInterval);
+        }
+    */
     ///interval run in differend speed on different devices so we need to calculate the time gap
     updateTimeGap() {
         this.currTime = new Date();

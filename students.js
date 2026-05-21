@@ -43,6 +43,7 @@ class Session {
     endPart1 = false;
     lastStepInPart1;
     timeOfPart1;
+    timeOfPart2;
     //timer;//
     /*
     srcPoint
@@ -56,19 +57,19 @@ class Session {
 
     constructor(id) {
         const firstChar = id.charAt(0);
-        if (firstChar == "9") { 
+        if (firstChar == "9") {
             //id = id.slice(1);
             //reRunningSession = true;
             //enforceTraining = false;
         }
         this.userId = id;
         var number;
-  
+
         if (!(isNaN(id))) {
             console.log('Input was not a number we will convert it');
             number = parseInt(id, 10);
         }
-        
+
         let isODD = (number % 2 === 0);
         ///the user with even id number will get high Ogen
         if (isODD) {
@@ -76,7 +77,7 @@ class Session {
         } else {
             this.group = "ogenHigh";
         }
-        if((this.userId == "666") || (this.userId == "667")) {
+        if ((this.userId == "666") || (this.userId == "667")) {
             enforceTraining = false;
         }
         /////this.currAutoColor = this.startAutoColor;
@@ -179,7 +180,7 @@ class Session {
                 //    console.log("W1!!!");
                 setWorld(this.userId);
                 //}
-                
+
                 ////N1/5
                 break;
             case "E":
@@ -209,10 +210,10 @@ class Session {
             this.runPart();
             this.initUser();
         }
-        
+
     }
 
-    async  initUser() {
+    async initUser() {
         ///add record for user including its connectionId
         const initialData = {
             action: 'initUser',
@@ -233,7 +234,7 @@ class Session {
             userId: this.userId,
             secondsOffered: secondsOffered,
             startAutoColor: this.startAutoColor,
-            part1Time: this.timeOfpart1
+            part1Time: this.timeOfPart1
         };
         /// replaced WebSocket send with REST call
         await postDataFuncURL(coupleURL, initialData);
@@ -243,7 +244,7 @@ class Session {
         ///add buy\sell time to record for existing user 
         console.log("in updatePartTime whichPart: " + whichPart)
         let initialData;
-        if(whichPart == "1") {
+        if (whichPart == "1") {
             console.log("in whichPart == 1")
             initialData = {
                 action: 'update1Time',
@@ -293,8 +294,8 @@ class Session {
                 this.timer.stopTimer();
                 timeToShow = Math.floor((this.timer.currTime - this.timer.firstTime) / 1000);
                 //console.log("timer stopped from nextStage" + timeToShow)
-                this.timeOfpart1 = this.timer.secToTimeString(timeToShow);///was wrong currTime
-                this.updatePartTime(this.timeOfpart1, "1");
+                this.timeOfPart1 = this.timer.secToTimeString(timeToShow);///was wrong currTime
+                this.updatePartTime(this.timeOfPart1, "1");
                 this.doFbMessage("סיימת את השלב הראשון. התבונן/י במסך הירוק מאחוריך להוראות");
                 ///messageBox.showExamA();///when he will click there "next" we will call initExamA
                 messageBox.showPart2_1();///for couple stoped after 22 stones and we will continue whit next 22 instead of exam
@@ -309,13 +310,13 @@ class Session {
             case "examB":
                 this.timer.stopTimer();
                 timeToShow = Math.floor((this.timer.currTime - this.timer.firstTime) / 1000);
-                let timeOfpart2 = this.timer.secToTimeString(timeToShow);
-                this.updatePartTime(timeOfpart2, "2")
+                this.timeOfPart2 = this.timer.secToTimeString(timeToShow);
+                this.updatePartTime(this.timeOfPart2, "2")
 
                 this.doFbMessage("סיימת את הניסוי. התבונן/י במסך הירוק מאחוריך לפרידה");
                 messageBox.showLastScreen();
                 allButtonsIsVisible(false);
-                
+
                 break;
 
             default:
@@ -332,7 +333,7 @@ class Session {
         if (!this.timer) {
             this.timer = new Timer();
         }
-        
+
         this.timer.startTimer();
         console.log("timer start from initPart2")
         elementsMenu.isVisible = true;
@@ -385,8 +386,8 @@ class Session {
         if (!allowReport) {
             return;
         }
-        console.log("this.endPart1: "+ this.endPart1);
-        if(this.endPart1) {
+        console.log("this.endPart1: " + this.endPart1);
+        if (this.endPart1) {
             ///we here with step 22 for the second time so its time to continue with stage 2
             ///we already set this.currAutoColor in showStartPart2()
             this.endPart1 = false;
@@ -394,7 +395,7 @@ class Session {
             allButtonsIsVisible(true);
             colorButtonsIsVisible(this.currAutoColor == "NO")///
             ///
-            this.askToDoNextBlock(this.lastStepInPart1);             
+            this.askToDoNextBlock(this.lastStepInPart1);
             return
         }
         //console.log("reportConnect");
@@ -404,10 +405,10 @@ class Session {
         let step = newElement.metadata.blockNum;
         let destModelLabel = this.modelInConnectedStage[this.connectedStage];
         let destModel = getModel(destModelLabel);
-        if (this.connectedStage == 1) {
-            this.timer.startTimer();
-        }
-        //console.log("step: " + step);
+        // Timer now starts when the first stage instruction screen is shown.
+        // if (this.connectedStage == 1) {
+        //     this.timer.startTimer();
+        // }        //console.log("step: " + step);
         ////const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == currentModel.metadata.modelName))[0];
         const dataLine = this.trainingModelData.filter(el => (el.step == step) && (el.modelName == destModel.metadata.modelName))[0];
         //console.log("dataLine: ");
@@ -475,13 +476,13 @@ class Session {
             wrongItems.push("model");
         }
         if (isCorect) {
-           
+
             //this.fb.dispose()
             //this.fb = new FbMessages((step + 1) + " יפה מאד. המשך לשלב")
             this.connectedStage++;
-            console.log("connectedStage in is corect: "+ this.connectedStage);
-            if (this.connectedStage == this.modelInConnectedStage.length/2) {
-                if ( !this.endPart1) {///can be canceled we have return when endPart1 is false
+            console.log("connectedStage in is corect: " + this.connectedStage);
+            if (this.connectedStage == this.modelInConnectedStage.length / 2) {
+                if (!this.endPart1) {///can be canceled we have return when endPart1 is false
                     ///we here with step 22 for the first time
                     this.endPart1 = true;
                     console.log("this.endPart1 set to true")
@@ -490,7 +491,7 @@ class Session {
                     this.lastStepInPart1 = step;
                     //this.timer.stopTimer(); ///done in: nextStage -->  case "training"
                     console.log("timer stopped from reportConnect")
-                } 
+                }
             }
 
             if (this.group == "A" || this.group == "B" || this.group == "C" || this.group == "ogenLow" || this.group == "ogenHigh") {
@@ -500,7 +501,7 @@ class Session {
                 //console.log("this.connectedStage: " + this.connectedStage);
                 //console.log(this.modelInConnectedStage.length + 1);
                 this.askToDoNextBlock(step); ///moved to function
- 
+
             } else {///E
                 let msg = this.doFbMessage((step + 1));
             }
@@ -594,7 +595,7 @@ class Session {
         ///created in index at socket.onopen
         //clearInterval(pingInterval);
     }
-    
+
 }
 //this.fb = new FbMessages("בוקר אביבי ושמח");
 //let modelData = modelDataAll.filter(x => x.modelName == currentModel.metadata.modelName);
