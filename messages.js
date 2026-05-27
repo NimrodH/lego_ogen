@@ -14,7 +14,7 @@ class Messages {
     constructor(messageType = null) {
         this.messageType = messageType;
         this.plane.position.z = -25;
-        this.plane.position.y = 2.7;/////2
+        this.plane.position.y = 2.7;//////2
         this.plane.position.x = 0;
         this.plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;///without iא its mirror
 
